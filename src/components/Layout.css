@@ -1,0 +1,224 @@
+/* Layout shell */
+.layout {
+  display: flex;
+  min-height: 100dvh;
+}
+
+/* ── SIDEBAR NAV ─────────────────────────────────────────── */
+.nav {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--divider);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow-y: auto;
+}
+
+.nav-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.nav-logo-mark {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.nav-section {
+  padding: 16px 0 8px;
+}
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 20px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: color var(--t-base) var(--ease),
+              background var(--t-base) var(--ease),
+              border-color var(--t-base) var(--ease);
+  text-decoration: none;
+}
+.nav-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+.nav-item.active {
+  color: var(--text-primary);
+  border-left-color: var(--red);
+  background: rgba(230, 25, 25, 0.06);
+}
+.nav-item-icon {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+.nav-item.active .nav-item-icon {
+  opacity: 1;
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+.nav-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--divider);
+}
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.nav-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+/* ── MAIN CONTENT ────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.page-header-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.page-header-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.page-body {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* ── MOBILE HAMBURGER ────────────────────────────────────── */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--bg-panel);
+  border: 1px solid var(--divider);
+  padding: 8px;
+  cursor: pointer;
+}
+
+.nav-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform var(--t-base) var(--ease);
+    width: 260px;
+  }
+  .nav.nav-open {
+    transform: translateX(0);
+  }
+  .nav-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-base) var(--ease);
+  }
+  .nav-overlay.nav-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .main-content {
+    padding-top: 52px;
+  }
+  .page-body {
+    padding: 20px 16px;
+  }
+  .page-header {
+    padding: 16px 16px;
+  }
+}
