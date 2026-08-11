@@ -1,0 +1,170 @@
+/* Batch page */
+.batch-page { animation: fadeUp 0.4s var(--ease) both; }
+
+.batch-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--divider);
+  min-height: calc(100dvh - 73px);
+}
+
+/* Upload zone */
+.batch-upload-zone {
+  background: var(--bg-root);
+  padding: 32px;
+}
+.batch-drop {
+  border: 1px dashed var(--divider-hi);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--t-base) var(--ease);
+  position: relative;
+}
+.batch-drop:hover, .batch-drop.drag-over {
+  border-color: var(--text-muted);
+  background: var(--bg-hover);
+}
+.batch-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.batch-drop-icon { color: var(--text-dim); }
+.batch-drop-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.batch-drop-hint {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.batch-drop-req {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+/* Upload actions */
+.batch-upload-actions {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Progress / status bar — industrial gauge */
+.batch-progress-section {
+  background: var(--bg-panel);
+  padding: 24px 32px;
+}
+.batch-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.batch-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.batch-progress-pct {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+.batch-gauge-track {
+  height: 6px;
+  background: var(--divider);
+  position: relative;
+  overflow: hidden;
+}
+.batch-gauge-fill {
+  height: 100%;
+  background: var(--text-primary);
+  transition: width 0.8s var(--ease);
+  position: relative;
+}
+/* Moving scan line on fill */
+.batch-gauge-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+  animation: gaugeScan 1s ease infinite;
+}
+@keyframes gaugeScan {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.batch-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--divider);
+  margin-top: 16px;
+}
+.batch-stat-cell {
+  background: var(--bg-elevated);
+  padding: 12px 16px;
+}
+.batch-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+}
+.batch-stat-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* Results table */
+.batch-results {
+  background: var(--bg-root);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.batch-table-actions {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.batch-status-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .batch-stats { grid-template-columns: 1fr 1fr; }
+  .batch-upload-zone { padding: 20px; }
+  .batch-drop { padding: 32px 16px; }
+}
