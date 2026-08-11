@@ -1,0 +1,280 @@
+/* ============================================================
+   RECORD PAGE — Product record output
+   Authored motion: fields resolve from block to value
+   ============================================================ */
+.record-page { animation: fadeUp 0.4s var(--ease) both; }
+
+.record-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1px;
+  background: var(--divider);
+  min-height: calc(100dvh - 73px);
+}
+
+/* ── MAIN RECORD AREA ─────────────────────────────────────── */
+.record-main {
+  background: var(--bg-root);
+  overflow-y: auto;
+}
+
+/* Record identity block */
+.record-identity {
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+.record-mpn {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.record-brand {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.record-category-path {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+.record-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+/* Tab bar for sections */
+.record-tabs {
+  border-bottom: 1px solid var(--divider);
+}
+
+/* Attribute sections */
+.record-section {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--divider);
+}
+.record-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+/* Field rows — the core data display */
+.record-field-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 90px;
+  gap: 1px;
+  background: var(--divider);
+  border-bottom: 1px solid var(--divider);
+  transition: background var(--t-base) var(--ease);
+}
+.record-field-row:last-child { border-bottom: none; }
+.record-field-row:hover { background: var(--divider-hi); }
+.record-field-row.missing-known { background: rgba(230, 25, 25, 0.03); }
+
+.record-field-name {
+  background: var(--bg-panel);
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+.record-field-value {
+  background: var(--bg-root);
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Block-to-value reveal animation */
+@keyframes blockReveal {
+  from { filter: blur(0); letter-spacing: -0.5em; opacity: 0; }
+  to   { filter: blur(0); letter-spacing: normal; opacity: 1; }
+}
+.record-field-value.revealing {
+  animation: blockReveal 0.5s var(--ease) both;
+}
+.record-field-value.empty-field {
+  color: var(--text-dim);
+  font-style: italic;
+}
+.record-field-value.missing-known {
+  color: var(--red);
+}
+.record-missing-tag {
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  border: 1px solid var(--red-dim);
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+.record-field-conf {
+  background: var(--bg-panel);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.record-field-conf-pct {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* Provenance expandable */
+.record-provenance {
+  grid-column: 1 / -1;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--divider);
+  overflow: hidden;
+  transition: max-height var(--t-slow) var(--ease);
+  max-height: 0;
+}
+.record-provenance.open { max-height: 400px; }
+.record-provenance-inner {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.record-provenance-row {
+  display: grid;
+  grid-template-columns: 60px 160px 1fr;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  align-items: center;
+}
+.record-provenance-src { color: var(--text-dim); }
+.record-provenance-val { color: var(--text-primary); }
+.record-provenance-link { color: var(--text-dim); text-decoration: underline; cursor: pointer; }
+
+.record-expand-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--t-base) var(--ease);
+  margin-left: auto;
+}
+.record-expand-btn:hover { color: var(--text-muted); }
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.record-sidebar {
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.record-sidebar-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--divider);
+}
+.record-sidebar-title {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+/* Confidence summary */
+.record-conf-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--divider);
+}
+.record-conf-cell {
+  background: var(--bg-elevated);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.record-conf-num {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+.record-conf-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Checklist against expected attrs */
+.record-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--divider);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+}
+.record-checklist-item:last-child { border-bottom: none; }
+.record-check-icon { flex-shrink: 0; width: 10px; }
+.record-check-icon.ok    { color: var(--green); }
+.record-check-icon.miss  { color: var(--red); }
+.record-check-icon.low   { color: var(--amber); }
+.record-check-name { color: var(--text-muted); flex: 1; }
+.record-check-name.missing { color: var(--red); }
+
+@media (max-width: 900px) {
+  .record-layout { grid-template-columns: 1fr; }
+  .record-field-row { grid-template-columns: 180px 1fr 80px; }
+  .record-identity { grid-template-columns: 1fr; }
+  .record-badges { flex-direction: row; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .record-field-row { grid-template-columns: 1fr; }
+  .record-field-name { padding: 8px 16px; }
+  .record-field-value { padding: 8px 16px; }
+  .record-field-conf  { display: none; }
+  .record-identity { padding: 20px 16px; }
+  .record-section { padding: 20px 16px; }
+}
