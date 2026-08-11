@@ -1,8 +1,14 @@
 import { useState } from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import './Layout.css'
 
 const NAV_ITEMS = [
+  {
+    section: 'Platform',
+    items: [
+      { path: '/',        label: '// Overview',    icon: <IconHome /> },
+    ]
+  },
   {
     section: 'Operations',
     items: [
@@ -28,6 +34,7 @@ const NAV_ITEMS = [
 export default function Layout() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
   const isLanding = location.pathname === '/'
 
   if (isLanding) return <Outlet />
@@ -47,7 +54,7 @@ export default function Layout() {
 
       {/* Sidebar */}
       <nav className={`nav ${open ? 'nav-open' : ''}`}>
-        <div className="nav-logo">
+        <div className="nav-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
           <div className="nav-logo-mark">SpecForge</div>
           <div className="nav-logo-sub">Product Intelligence</div>
         </div>
@@ -59,6 +66,7 @@ export default function Layout() {
               <NavLink
                 key={item.path}
                 to={item.path}
+                end={item.path === '/'}
                 className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
                 onClick={() => setOpen(false)}
               >
@@ -88,6 +96,13 @@ export default function Layout() {
 }
 
 /* ── Inline SVG Icons (phosphor-style, ultra-thin) ─────── */
+function IconHome() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M1.5 6L7 1.5L12.5 6V12.5H8.5V8.5H5.5V12.5H1.5V6Z"/>
+    </svg>
+  )
+}
 function IconPlus() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -98,28 +113,28 @@ function IconPlus() {
 function IconQueue() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="1" y="2" width="12" height="2.5"/><rect x="1" y="5.75" width="12" height="2.5"/><rect x="1" y="9.5" width="8" height="2.5"/>
+      <rect x="2" y="2" width="10" height="10" rx="0"/><line x1="4" y1="5" x2="10" y2="5"/><line x1="4" y1="7.5" x2="10" y2="7.5"/><line x1="4" y1="10" x2="8" y2="10"/>
     </svg>
   )
 }
 function IconBatch() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="1" y="1" width="12" height="3"/><rect x="1" y="5.5" width="12" height="3"/><rect x="1" y="10" width="12" height="3"/>
+      <rect x="2" y="2" width="4" height="4"/><rect x="8" y="2" width="4" height="4"/><rect x="2" y="8" width="4" height="4"/><rect x="8" y="8" width="4" height="4"/>
     </svg>
   )
 }
 function IconLib() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M1 2h12v10H1z"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="1" y1="8" x2="13" y2="8"/>
+      <path d="M2 2.5H5.5V12H2V2.5Z"/><path d="M5.5 2.5H9V12H5.5V2.5Z"/><path d="M9 2.5H12V12H9V2.5Z"/>
     </svg>
   )
 }
 function IconSettings() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="7" cy="7" r="2"/><path d="M7 1v2M7 11v2M1 7h2M11 7h2M2.93 2.93l1.41 1.41M9.66 9.66l1.41 1.41M2.93 11.07l1.41-1.41M9.66 4.34l1.41-1.41"/>
+      <circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.75 2.75l1.06 1.06M10.19 10.19l1.06 1.06M2.75 11.25l1.06-1.06M10.19 3.81l1.06-1.06"/>
     </svg>
   )
 }
