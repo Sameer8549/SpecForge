@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './History.css'
+import { SkelTableRow, ErrorInline, EmptyState } from '../components/States'
 
 const RECORDS = [
   { mpn: 'LM741CN',   brand: 'Texas Instruments',   category: 'Op-Amps',       fields: 11, conf: 0.91, date: '2024-08-11', status: 'complete', wo: 'WO-20240811-001' },
@@ -22,6 +23,14 @@ export default function History() {
   const [catFilter, setCatFilter] = useState('All')
   const [brandFilter, setBrandFilter] = useState('All')
   const [sortBy, setSortBy] = useState('date')
+  const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
+
+  // Simulate initial data load
+  useState(() => {
+    const t = setTimeout(() => setLoading(false), 900)
+    return () => clearTimeout(t)
+  })
 
   const filtered = RECORDS
     .filter(r => {
@@ -39,6 +48,57 @@ export default function History() {
       if (sortBy === 'mpn')  return a.mpn.localeCompare(b.mpn)
       return 0
     })
+
+  // Loading skeleton
+  if (loading) {
+    return (
+      <div className="history-page">
+        <div className="page-header">
+          <div className="page-header-left">
+            <span className="page-header-label">// Data Library</span>
+            <h1 className="page-header-title">Record History</h1>
+          </div>
+        </div>
+        <div className="history-layout">
+          <div className="history-filters">
+            <div className="history-filter-section">
+              <div className="history-filter-title">// Search</div>
+              <span className="skel skel-line" style={{width:'100%',height:32}} />
+            </div>
+            <div className="history-filter-section">
+              <div className="history-filter-title">// Category</div>
+              {Array.from({length:5}).map((_,i) => <span key={i} className="skel skel-line skel-line-sm" style={{width:'70%',display:'block',marginBottom:8}} />)}
+            </div>
+          </div>
+          <div className="history-main">
+            <div className="history-list-header"><span className="skel skel-line skel-line-sm" style={{width:200}} /></div>
+            {Array.from({length:6}).map((_,i) => <SkelTableRow key={i} />)}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (fetchError) {
+    return (
+      <div className="history-page">
+        <div className="page-header">
+          <div className="page-header-left">
+            <span className="page-header-label">// Data Library</span>
+            <h1 className="page-header-title">Record History</h1>
+          </div>
+        </div>
+        <div style={{padding:32}}>
+          <ErrorInline
+            code="ERR_LIBRARY"
+            message="Failed to load record library. Check your network connection and API key configuration."
+            onRetry={() => { setFetchError(null); setLoading(true); }}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="history-page">

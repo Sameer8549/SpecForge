@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './Record.css'
+import { SkelFieldRow, ErrorPage, EmptyState } from '../components/States'
 
 const RECORD = {
   mpn: 'LM741CN',
@@ -36,7 +37,7 @@ function ConfBar({ conf }) {
   const cls = conf >= 0.9 ? 'high' : conf >= 0.7 ? 'medium' : 'low'
   return (
     <div className="conf-bar">
-      <div className="conf-bar-fill" style={{ width: `${conf * 100}%` }} data-cls={cls} />
+      <div className={`conf-bar-fill ${cls}`} style={{ width: `${conf * 100}%` }} />
     </div>
   )
 }
@@ -97,16 +98,90 @@ export default function Record() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setRevealed(true), 200)
-    return () => clearTimeout(t)
-  }, [])
+    // Simulate data fetch — loading skeleton for 1.2s then resolve
+    const t1 = setTimeout(() => {
+      // Simulate a 5% chance of error for demo
+      if (id === 'error-demo') {
+        setError({ code: 'ERR_FETCH', message: 'Failed to load product record. The work order ID may be invalid or the record has not been processed yet.' })
+        setLoading(false)
+        return
+      }
+      setLoading(false)
+    }, 1200)
+    const t2 = setTimeout(() => setRevealed(true), 1400)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [id])
+
 
   const allFields = Object.values(RECORD.fields).flat()
   const populated = allFields.filter(f => f.value !== null && !f.missing).length
   const missing   = allFields.filter(f => f.missing).length
   const flagged   = allFields.filter(f => f.conf > 0 && f.conf < 0.8).length
+
+  // Loading state — show skeleton field rows
+  if (loading) {
+    return (
+      <div className="record-page">
+        <div className="page-header">
+          <div className="page-header-left">
+            <span className="page-header-label">// Product Record — {id}</span>
+            <h1 className="page-header-title"><span className="skel skel-line skel-line-xl" style={{width:160, display:'inline-block'}} /></h1>
+          </div>
+        </div>
+        <div className="record-layout">
+          <div className="record-main">
+            <div className="record-identity">
+              <div>
+                <div className="record-mpn"><span className="skel skel-line skel-line-xl" style={{width:200, display:'inline-block'}} /></div>
+                <div style={{marginTop:8}}><span className="skel skel-line skel-line-sm" style={{width:160, display:'inline-block'}} /></div>
+                <div style={{marginTop:6}}><span className="skel skel-line skel-line-sm" style={{width:280, display:'inline-block'}} /></div>
+              </div>
+            </div>
+            <div className="record-section">
+              <div className="record-section-title">// Loading fields...</div>
+              {Array.from({length:8}).map((_,i) => <SkelFieldRow key={i} />)}
+            </div>
+          </div>
+          <div className="record-sidebar">
+            <div className="record-sidebar-section">
+              <div className="record-sidebar-title">// Record Summary</div>
+              <div style={{display:'flex',flexDirection:'column',gap:12,paddingTop:8}}>
+                {Array.from({length:4}).map((_,i) => (
+                  <span key={i} className="skel skel-line" style={{width:'80%'}} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="record-page">
+        <div className="page-header">
+          <div className="page-header-left">
+            <span className="page-header-label">// Product Record — {id}</span>
+            <h1 className="page-header-title">Load Failed</h1>
+          </div>
+        </div>
+        <ErrorPage
+          code={error.code}
+          title="Record Not Found"
+          message={error.message}
+          detail={`Work Order: ${id}\nTimestamp: ${new Date().toISOString()}`}
+          onRetry={() => { setError(null); setLoading(true); }}
+          onBack={() => navigate('/history')}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="record-page">

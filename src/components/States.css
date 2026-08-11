@@ -1,0 +1,267 @@
+/* ============================================================
+   STATES — Global empty, loading, error, and skeleton components
+   ============================================================ */
+
+/* ── SKELETON BLOCKS (field-level) ──────────────────────── */
+.skel-line {
+  height: 12px;
+  border-radius: 0;
+  display: block;
+}
+.skel-line-sm  { height: 9px; }
+.skel-line-lg  { height: 18px; }
+.skel-line-xl  { height: 28px; }
+
+/* Skeleton field row — mimics record-field-row layout */
+.skel-field-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 90px;
+  gap: 1px;
+  background: var(--divider);
+  border-bottom: 1px solid var(--divider);
+}
+.skel-field-col {
+  background: var(--bg-panel);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+}
+.skel-field-col-root {
+  background: var(--bg-root);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Skeleton table row */
+.skel-table-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 100px 80px 80px 80px;
+  gap: 1px;
+  background: var(--divider);
+  border-bottom: 1px solid var(--divider);
+}
+.skel-table-col {
+  background: var(--bg-root);
+  padding: 14px 16px;
+}
+
+/* Skeleton queue item */
+.skel-queue-item {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Skeleton batch row */
+.skel-batch-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── ERROR BANNER (page-level) ───────────────────────────── */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 73px);
+  gap: 24px;
+  padding: 48px 24px;
+  text-align: center;
+}
+.error-page-code {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.error-page-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.error-page-msg {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.5;
+}
+.error-page-detail {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-dim);
+  background: var(--bg-panel);
+  border: 1px solid var(--divider);
+  padding: 12px 20px;
+  max-width: 560px;
+  width: 100%;
+  text-align: left;
+  line-height: 1.8;
+}
+.error-page-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── INLINE ERROR BOX ────────────────────────────────────── */
+.error-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  border: 1px solid var(--red-dim);
+  background: rgba(230, 25, 25, 0.04);
+}
+.error-inline-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.error-inline-msg {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.error-inline-retry {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  background: none;
+  border: 1px solid var(--red-dim);
+  padding: 5px 12px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all var(--t-base) var(--ease);
+}
+.error-inline-retry:hover {
+  background: rgba(230, 25, 25, 0.08);
+  border-color: var(--red);
+}
+
+/* ── EMPTY STATE VARIANTS ────────────────────────────────── */
+.empty-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  padding: 64px 32px;
+  text-align: center;
+}
+.empty-art {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  white-space: pre;
+  letter-spacing: 0.06em;
+}
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+}
+.empty-desc {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  max-width: 340px;
+  line-height: 1.5;
+}
+
+/* ── LOADING OVERLAY (stage spinner) ─────────────────────── */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12, 12, 12, 0.85);
+  gap: 16px;
+  z-index: 50;
+}
+.loading-indicator {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+/* Blinking blocks loader — no spinner */
+.loading-blocks {
+  display: flex;
+  gap: 4px;
+}
+.loading-block {
+  width: 8px;
+  height: 20px;
+  background: var(--text-muted);
+  animation: blockPulse 1.2s ease infinite;
+}
+.loading-block:nth-child(2) { animation-delay: 0.15s; }
+.loading-block:nth-child(3) { animation-delay: 0.30s; }
+.loading-block:nth-child(4) { animation-delay: 0.45s; }
+.loading-block:nth-child(5) { animation-delay: 0.60s; }
+
+@keyframes blockPulse {
+  0%, 100% { opacity: 0.15; transform: scaleY(0.4); }
+  50%       { opacity: 1;    transform: scaleY(1); }
+}
+
+/* Page-level full loading screen */
+.loading-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 73px);
+  gap: 20px;
+}
+.loading-page-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Stage-level loading bar */
+.stage-loading-bar {
+  width: 200px;
+  height: 2px;
+  background: var(--divider);
+  overflow: hidden;
+}
+.stage-loading-fill {
+  height: 100%;
+  background: var(--text-muted);
+  width: 40%;
+  animation: stageScan 1.4s ease-in-out infinite;
+}
+@keyframes stageScan {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(600%); }
+}

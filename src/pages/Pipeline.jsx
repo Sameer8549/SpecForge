@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './Pipeline.css'
+import { ErrorInline, StageLoader } from '../components/States'
 
 const STAGES = [
   {

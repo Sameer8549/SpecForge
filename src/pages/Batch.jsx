@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Batch.css'
+import { EmptyState, ErrorInline } from '../components/States'
 
 const BATCH_ROWS = [
   { mpn: 'LM741CN',   brand: 'Texas Instruments',  fields: 11, missing: 3, conf: 0.91, status: 'complete', wo: 'WO-001' },
