@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Substrate -->
+  <rect width="512" height="512" fill="#0C0C0C"/>
+  
+  <!-- Outer telemetry frame / corner crosshairs -->
+  <path d="M 40 40 L 120 40 M 40 40 L 40 120" stroke="#E61919" stroke-width="12" fill="none"/>
+  <path d="M 472 40 L 392 40 M 472 40 L 472 120" stroke="#E61919" stroke-width="12" fill="none"/>
+  <path d="M 40 472 L 120 472 M 40 472 L 40 392" stroke="#E61919" stroke-width="12" fill="none"/>
+  <path d="M 472 472 L 392 472 M 472 472 L 472 392" stroke="#E61919" stroke-width="12" fill="none"/>
+  
+  <!-- Center grid telemetry markings -->
+  <line x1="256" y1="40" x2="256" y2="70" stroke="#E61919" stroke-width="8"/>
+  <line x1="256" y1="442" x2="256" y2="472" stroke="#E61919" stroke-width="8"/>
+  <line x1="40" y1="256" x2="70" y2="256" stroke="#E61919" stroke-width="8"/>
+  <line x1="442" y1="256" x2="472" y2="256" stroke="#E61919" stroke-width="8"/>
+
+  <!-- Anvil / Tactical Forge emblem -->
+  <path d="M 120 160 L 392 160 L 392 210 L 320 210 L 320 290 L 370 290 L 370 342 L 142 342 L 142 290 L 192 290 L 192 210 L 120 210 Z" fill="#E8E8E8"/>
+
+  <!-- Red core indicator block -->
+  <rect x="236" y="236" width="40" height="40" fill="#E61919"/>
+</svg>

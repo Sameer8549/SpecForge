@@ -84,66 +84,6 @@
   gap: 20px;
 }
 
-/* API key row */
-.api-key-row {
-  display: grid;
-  grid-template-columns: 160px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--divider);
-}
-.api-key-row:last-child { border-bottom: none; }
-.api-key-name {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-.api-key-value {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  background: var(--bg-panel);
-  border: 1px solid var(--divider);
-  padding: 6px 10px;
-  letter-spacing: 0.1em;
-}
-.api-key-status {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-mono);
-  font-size: 0.5625rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.api-key-status.ok { color: var(--green); }
-.api-key-status.missing { color: var(--red); }
-
-/* Model routing table */
-.model-route-row {
-  display: grid;
-  grid-template-columns: 140px 1fr 100px;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--divider);
-}
-.model-route-row:last-child { border-bottom: none; }
-.model-role {
-  font-family: var(--font-mono);
-  font-size: 0.5625rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-.model-route-name {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
 /* Toggle switch */
 .toggle-row {
   display: flex;
