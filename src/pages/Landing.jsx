@@ -2,76 +2,89 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Landing.css'
 
-const HEADLINE_FULL = 'Structure from Signal'
+const HEADLINE_FULL = 'Raw Catalog.\nClean Record.'
 
 const BOOT_LINES = [
-  { type: 'prompt',  text: '$ specforge-engine --init', delay: 200 },
-  { type: 'output',  text: 'Loading taxonomy database...', delay: 600 },
-  { type: 'output',  text: 'UNSPSC v24.1201 — 57,832 categories', delay: 900 },
-  { type: 'success', text: '✓ Taxonomy loaded', delay: 1100 },
-  { type: 'output',  text: 'Initializing model router...', delay: 1300 },
-  { type: 'output',  text: 'Primary: GPT-4o  Fallback: Claude-3.5', delay: 1500 },
-  { type: 'success', text: '✓ Model router active', delay: 1700 },
-  { type: 'spacer',  text: '', delay: 1900 },
-  { type: 'prompt',  text: '$ process-work-order WO-20240811-001', delay: 2000 },
-  { type: 'output',  text: 'MPN: LM741CN  Brand: Texas Instruments', delay: 2300 },
-  { type: 'output',  text: 'Datasheet: TI-LM741.pdf (2.1 MB)', delay: 2500 },
-  { type: 'spacer',  text: '', delay: 2700 },
-  { type: 'heading', text: '[ CLASSIFY ] Resolving category path...', delay: 2800 },
-  { type: 'output',  text: '  Electronics › ICs › Op-Amps › General', delay: 3100 },
-  { type: 'success', text: '✓ Category: 32131600 — Confidence: 0.97', delay: 3400 },
-  { type: 'spacer',  text: '', delay: 3600 },
-  { type: 'heading', text: '[ EXTRACT ] Pulling 14 expected fields...', delay: 3700 },
-  { type: 'output',  text: '  Supply voltage, Input offset, Bandwidth...', delay: 4000 },
-  { type: 'output',  text: '  Extracted: 11/14  Missing: 3  Conflict: 1', delay: 4300 },
-  { type: 'spacer',  text: '', delay: 4500 },
-  { type: 'heading', text: '[ VERIFY ] Cross-referencing sources...', delay: 4600 },
-  { type: 'warn',    text: '⚠ Supply Voltage: SRC-A=±18V  SRC-B=±22V', delay: 5000 },
-  { type: 'spacer',  text: '', delay: 5200 },
-  { type: 'heading', text: '[ ADJUDICATE ] Resolving conflict...', delay: 5300 },
-  { type: 'output',  text: '  Datasheet primary source wins: ±18V', delay: 5700 },
-  { type: 'success', text: '✓ Resolution recorded with reasoning', delay: 6000 },
-  { type: 'spacer',  text: '', delay: 6200 },
-  { type: 'heading', text: '[ AUDIT ] Generating record...', delay: 6300 },
-  { type: 'success', text: '✓ Record WO-001 complete — 11/14 fields', delay: 6700 },
-  { type: 'output',  text: '  3 fields flagged for human review', delay: 7000 },
-  { type: 'success', text: '✓ Added to review queue', delay: 7300 },
-]
-
-const FEATURES = [
-  {
-    num: '01',
-    title: 'Classify',
-    desc: 'Resolve any MPN to its UNSPSC category path, building an expected-attribute checklist before extraction begins.'
-  },
-  {
-    num: '02',
-    title: 'Extract',
-    desc: 'Pull structured attributes from datasheets, distributor feeds, and manufacturer pages simultaneously.'
-  },
-  {
-    num: '03',
-    title: 'Verify',
-    desc: 'Cross-reference every field across sources. Flag conflicts the moment two sources disagree.'
-  },
-  {
-    num: '04',
-    title: 'Adjudicate',
-    desc: 'Resolve disagreements with documented reasoning. Every decision is traceable to its source.'
-  },
-  {
-    num: '05',
-    title: 'Audit',
-    desc: 'Produce per-field confidence scores, known-missing markers, and human-reviewable provenance.'
-  }
+  { type: 'prompt',  text: '$ specforge --process "LM741CN, Texas Instruments, Op-Amp General"', delay: 200 },
+  { type: 'spacer',  text: '', delay: 450 },
+  { type: 'heading', text: '[ CLEAN ] Stripping placeholder values...', delay: 500 },
+  { type: 'warn',    text: '⚠ Brand field: "-- No Unilog Brand --" → flagged blank', delay: 750 },
+  { type: 'success', text: '✓ Clean complete', delay: 1000 },
+  { type: 'spacer',  text: '', delay: 1100 },
+  { type: 'heading', text: '[ RESOLVE BRAND ] Fuzzy-matching canonical form...', delay: 1150 },
+  { type: 'output',  text: '  Input: "Texas Instruments Inc."', delay: 1400 },
+  { type: 'output',  text: '  Candidate: "Texas Instruments" — score: 0.96', delay: 1650 },
+  { type: 'success', text: '✓ Canonical: "Texas Instruments" (Unicat #48291)', delay: 1900 },
+  { type: 'spacer',  text: '', delay: 2050 },
+  { type: 'heading', text: '[ CLASSIFY ] Resolving UNSPSC classpath...', delay: 2100 },
+  { type: 'output',  text: '  Electronics › ICs › Op-Amps › General Purpose', delay: 2350 },
+  { type: 'success', text: '✓ 32131601 — 14 expected attributes loaded', delay: 2600 },
+  { type: 'spacer',  text: '', delay: 2750 },
+  { type: 'heading', text: '[ EXTRACT ] Pulling attributes from sources...', delay: 2800 },
+  { type: 'output',  text: '  Supply Voltage, Bandwidth, Slew Rate, Package...', delay: 3050 },
+  { type: 'success', text: '✓ 11/14 extracted  3 known-missing', delay: 3300 },
+  { type: 'spacer',  text: '', delay: 3450 },
+  { type: 'heading', text: '[ NORMALIZE ] Constraining to approved vocabulary...', delay: 3500 },
+  { type: 'output',  text: '  "inches" → "IN."  "DIP8" → "DIP-8"  "±18v" → "±18V"', delay: 3750 },
+  { type: 'success', text: '✓ 11 values mapped to controlled vocabulary', delay: 4000 },
+  { type: 'spacer',  text: '', delay: 4150 },
+  { type: 'heading', text: '[ VERIFY ] Cross-referencing source entailment...', delay: 4200 },
+  { type: 'warn',    text: '⚠ Supply Voltage: SRC-A=±18V (datasheet)  SRC-B=±22V (distributor)', delay: 4500 },
+  { type: 'spacer',  text: '', delay: 4700 },
+  { type: 'heading', text: '[ ADJUDICATE ] Resolving conflict...', delay: 4750 },
+  { type: 'output',  text: '  P1 Manufacturer Datasheet beats P3 Distributor', delay: 5000 },
+  { type: 'success', text: '✓ ±18V — reasoning logged', delay: 5250 },
+  { type: 'spacer',  text: '', delay: 5400 },
+  { type: 'heading', text: '[ BUILD DESCRIPTION ] Generating variants...', delay: 5450 },
+  { type: 'success', text: '✓ Mobile / Short / Long / Invoice / Retail written', delay: 5700 },
+  { type: 'spacer',  text: '', delay: 5850 },
+  { type: 'heading', text: '[ AUDIT ] Coverage + confidence + readiness...', delay: 5900 },
+  { type: 'warn',    text: '⚠ Readiness: NEEDS REVIEW — 9/14 fully resolved', delay: 6150 },
+  { type: 'spacer',  text: '', delay: 6300 },
+  { type: 'heading', text: '[ MAP OUTPUT ] Writing to Delivery Format columns...', delay: 6350 },
+  { type: 'success', text: '✓ Record WO-20240811-001 complete', delay: 6600 },
+  { type: 'success', text: '✓ 3 fields → review queue', delay: 6800 },
 ]
 
 const PIPELINE_STAGES = [
-  { num: '01', name: 'Classify', desc: 'UNSPSC category + attribute schema' },
-  { num: '02', name: 'Extract',  desc: 'Multi-source field extraction' },
-  { num: '03', name: 'Verify',   desc: 'Cross-source validation' },
-  { num: '04', name: 'Adjudicate', desc: 'Conflict resolution + reasoning' },
-  { num: '05', name: 'Audit',    desc: 'Confidence scoring + provenance' },
+  { num: '01', name: 'Clean',               desc: 'Strip & flag placeholder values' },
+  { num: '02', name: 'Resolve Brand',        desc: 'Fuzzy-match to canonical Unicat form' },
+  { num: '03', name: 'Classify',             desc: 'UNSPSC classpath + attribute schema' },
+  { num: '04', name: 'Extract',              desc: 'Multi-source field extraction' },
+  { num: '05', name: 'Normalize',            desc: 'Constrain to approved LOV / UOM' },
+  { num: '06', name: 'Verify',               desc: 'Source grounding & entailment check' },
+  { num: '07', name: 'Adjudicate',           desc: 'Conflict resolution with logged reasoning' },
+  { num: '08', name: 'Build Description',    desc: 'Formula-driven description variants' },
+  { num: '09', name: 'Audit',                desc: 'Coverage, confidence, review flags' },
+  { num: '10', name: 'Map Output',           desc: 'Delivery Format column mapping' },
+]
+
+const CAPABILITIES = [
+  {
+    num: '01',
+    title: 'Brand Resolution',
+    desc: 'Fuzzy-match messy manufacturer and brand strings to their one canonical approved form in the Unicat list. Logged confidence and fallback note on every record.',
+  },
+  {
+    num: '02',
+    title: 'Vocabulary Control',
+    desc: 'Every extracted value is forced into its LOV-approved form. Nothing outside the controlled vocabulary is passed through — it is mapped, or flagged.',
+  },
+  {
+    num: '03',
+    title: 'Description Variants',
+    desc: 'Mobile, Invoice, Short, Long, Retail, Marketing, and Features 1–20 generated by formula from verified fields. Character-limit compliance checked on every variant.',
+  },
+  {
+    num: '04',
+    title: 'Conflict Adjudication',
+    desc: 'Source priority applied top-down (Manufacturer Datasheet → Website → Distributor → Other). Conflict resolution is logged per field — fully traceable.',
+  },
+  {
+    num: '05',
+    title: 'Audit & Coverage',
+    desc: 'Per-field confidence, entailment label, missing-field markers, and a readiness state (Ready / Needs Review / Incomplete) on every processed record.',
+  },
 ]
 
 export default function Landing() {
@@ -89,13 +102,13 @@ export default function Landing() {
       if (i <= HEADLINE_FULL.length) {
         setHeadline(HEADLINE_FULL.slice(0, i))
         i++
-        const t = setTimeout(tick, i === 1 ? 500 : 55)
+        const t = setTimeout(tick, i === 1 ? 400 : 45)
         timeoutsRef.current.push(t)
       } else {
         setHeadlineDone(true)
       }
     }
-    const t = setTimeout(tick, 400)
+    const t = setTimeout(tick, 300)
     timeoutsRef.current.push(t)
     return () => timeoutsRef.current.forEach(clearTimeout)
   }, [])
@@ -113,6 +126,9 @@ export default function Landing() {
     })
     return () => timeoutsRef.current.forEach(clearTimeout)
   }, [])
+
+  // Format headline with line break
+  const headlineLines = headline.split('\n')
 
   return (
     <div className="landing">
@@ -134,11 +150,16 @@ export default function Landing() {
           <div>
             <p className="land-hero-eyebrow">[ Product Intelligence Platform ]</p>
             <h1 className="land-hero-headline text-heading">
-              {headline}
+              {headlineLines.map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < headlineLines.length - 1 && <br />}
+                </span>
+              ))}
               {!headlineDone && <span className="typewriter-cursor" />}
             </h1>
             <p className="land-hero-sub">
-              SpecForge turns incomplete product inputs — MPNs, brand names, short descriptions, datasheets — into structured, validated, explainable product records for industrial commerce.
+              SpecForge turns messy distributor catalog rows — manufacturer part numbers, short descriptions, unresolved brand strings, placeholder values — into structured, vocabulary-controlled product records for industrial commerce.
             </p>
             <div className="land-hero-cta-row">
               <button className="btn btn-primary" onClick={() => navigate('/input')}>
@@ -153,15 +174,15 @@ export default function Landing() {
           <div className="land-hero-meta">
             <div className="land-hero-meta-grid">
               <div className="land-hero-meta-cell">
-                <span className="land-hero-meta-value">97%</span>
-                <span className="land-hero-meta-label">Field accuracy</span>
-              </div>
-              <div className="land-hero-meta-cell">
-                <span className="land-hero-meta-value">5</span>
+                <span className="land-hero-meta-value">10</span>
                 <span className="land-hero-meta-label">Pipeline stages</span>
               </div>
               <div className="land-hero-meta-cell">
-                <span className="land-hero-meta-value">&lt;8s</span>
+                <span className="land-hero-meta-value">LOV</span>
+                <span className="land-hero-meta-label">Vocab-controlled</span>
+              </div>
+              <div className="land-hero-meta-cell">
+                <span className="land-hero-meta-value">&lt;10s</span>
                 <span className="land-hero-meta-label">Per record</span>
               </div>
             </div>
@@ -172,12 +193,12 @@ export default function Landing() {
         <div className="land-hero-right">
           <div className="land-terminal-header">
             <div className="land-terminal-dot" />
-            <span className="land-terminal-title">specforge-engine v1.0.0 — Live</span>
+            <span className="land-terminal-title">specforge-engine v2.0 — Live Processing</span>
           </div>
           <div className="land-terminal-body" ref={termRef}>
             {BOOT_LINES.map((line, idx) =>
               visibleLines.includes(idx) ? (
-                <div key={idx} className={`land-term-line ${line.type === 'error-t' ? 'error-t' : line.type}`}>
+                <div key={idx} className={`land-term-line ${line.type}`}>
                   {line.text}
                 </div>
               ) : null
@@ -186,9 +207,65 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Features grid */}
+      {/* What it fixes — the problem framing */}
+      <section className="land-problem">
+        <div className="land-problem-inner">
+          <div className="land-problem-label">// The Problem</div>
+          <div className="land-problem-grid">
+            <div className="land-problem-before">
+              <div className="land-problem-side-label">Raw Distributor Row</div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">MPN</span>
+                <span className="land-problem-val raw">LM741CN/NOPB</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Brand</span>
+                <span className="land-problem-val placeholder">-- No Unilog Brand --</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Manufacturer</span>
+                <span className="land-problem-val raw">Texas Instruments Inc.</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Description</span>
+                <span className="land-problem-val raw">OP AMP, SGL, 1MHZ, 0.5V/US, DIP-8 ±18V</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">UOM</span>
+                <span className="land-problem-val raw">each</span>
+              </div>
+            </div>
+            <div className="land-problem-arrow">→</div>
+            <div className="land-problem-after">
+              <div className="land-problem-side-label">SpecForge Record</div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">MPN</span>
+                <span className="land-problem-val clean">LM741CN/NOPB</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Brand</span>
+                <span className="land-problem-val clean">Texas Instruments <span className="land-problem-match">[ #48291 ✓ ]</span></span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Manufacturer</span>
+                <span className="land-problem-val clean">Texas Instruments</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">Classpath</span>
+                <span className="land-problem-val clean">32131601 — Op-Amps, General Purpose</span>
+              </div>
+              <div className="land-problem-row">
+                <span className="land-problem-field">UOM</span>
+                <span className="land-problem-val clean">EA <span className="land-problem-match">[ LOV ✓ ]</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Capabilities */}
       <section className="land-features">
-        {FEATURES.map(f => (
+        {CAPABILITIES.map(f => (
           <div className="land-feature-cell" key={f.num}>
             <span className="land-feature-number">[ {f.num} ]</span>
             <div className="land-feature-title">{f.title}</div>
@@ -199,13 +276,16 @@ export default function Landing() {
 
       {/* Pipeline diagram */}
       <section className="land-pipeline">
-        <div className="land-pipeline-label">// Pipeline Architecture</div>
+        <div className="land-pipeline-label">// 10-Stage Pipeline</div>
         <div className="land-pipeline-stages">
-          {PIPELINE_STAGES.map(s => (
+          {PIPELINE_STAGES.map((s, i) => (
             <div className="land-pipeline-stage" key={s.num}>
               <span className="land-pipeline-stage-num">{s.num}</span>
               <div className="land-pipeline-stage-name">[ {s.name} ]</div>
               <div className="land-pipeline-stage-desc">{s.desc}</div>
+              {i < PIPELINE_STAGES.length - 1 && (
+                <div className="land-pipeline-connector">›</div>
+              )}
             </div>
           ))}
         </div>
@@ -214,11 +294,12 @@ export default function Landing() {
       {/* Footer */}
       <footer className="land-footer">
         <span className="land-footer-copy">
-          SpecForge — REV 1.0 — Product Intelligence Platform
+          SpecForge — REV 2.0 — Product Intelligence Platform
         </span>
         <div className="land-footer-links">
-          <span className="land-footer-link" onClick={() => navigate('/settings')}>API Keys</span>
+          <span className="land-footer-link" onClick={() => navigate('/settings')}>Settings</span>
           <span className="land-footer-link" onClick={() => navigate('/history')}>Library</span>
+          <span className="land-footer-link" onClick={() => navigate('/batch')}>Batch</span>
           <span className="land-footer-link" onClick={() => navigate('/input')}>New Record</span>
         </div>
       </footer>

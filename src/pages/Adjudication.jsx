@@ -2,15 +2,22 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './Adjudication.css'
 
+const PRIORITY_LADDER = [
+  { rank: 1, label: 'Manufacturer Datasheet' },
+  { rank: 2, label: 'Manufacturer Website' },
+  { rank: 3, label: 'Authorized Distributor' },
+  { rank: 4, label: 'Other' },
+]
+
 const CONFLICTS = [
   {
     id: 1,
     field: 'Supply Voltage',
     status: 'open',
     sources: [
-      { id: 'SRC-A', value: '±18V', url: 'ti.com/product/LM741', type: 'Manufacturer Datasheet', winner: true },
-      { id: 'SRC-B', value: '±22V', url: 'octopart.com/LM741CN', type: 'Distributor Listing',    winner: false },
-      { id: 'SRC-D', value: '±18V', url: 'mouser.com/LM741CN',   type: 'Distributor Listing',    winner: false },
+      { id: 'SRC-A', value: '±18V', url: 'ti.com/product/LM741', type: 'Manufacturer Datasheet', priority: 1, winner: true,  rejectionReason: null },
+      { id: 'SRC-B', value: '±22V', url: 'octopart.com/LM741CN', type: 'Authorized Distributor', priority: 3, winner: false, rejectionReason: 'Value is the absolute maximum rating, not recommended supply — common distributor listing error. Lower priority than SRC-A.' },
+      { id: 'SRC-D', value: '±18V', url: 'mouser.com/LM741CN',   type: 'Authorized Distributor', priority: 3, winner: false, rejectionReason: 'Value agrees with manufacturer but is superseded by SRC-A (same priority tier, SRC-A selected as primary).' },
     ],
     resolution: '±18V',
     rule: 'Manufacturer primary source takes precedence over distributor listings. SRC-A is the official TI datasheet. SRC-D corroborates. SRC-B value (±22V) is an absolute maximum rating, not the recommended supply — common distributor listing error.',
@@ -21,14 +28,37 @@ const CONFLICTS = [
     field: 'Input Offset Voltage',
     status: 'resolved',
     sources: [
-      { id: 'SRC-A', value: '6mV',  url: 'ti.com/product/LM741', type: 'Manufacturer Datasheet', winner: true },
-      { id: 'SRC-C', value: '5mV',  url: 'datasheetarchive.com', type: 'Archived Datasheet',      winner: false },
+      { id: 'SRC-A', value: '6mV', url: 'ti.com/product/LM741', type: 'Manufacturer Datasheet', priority: 1, winner: true,  rejectionReason: null },
+      { id: 'SRC-C', value: '5mV', url: 'datasheetarchive.com',  type: 'Other',                  priority: 4, winner: false, rejectionReason: 'Archived datasheet is undated; current manufacturer revision (2023) supersedes this value. Lowest priority tier (Other).' },
     ],
     resolution: '6mV',
     rule: 'Current manufacturer datasheet (SRC-A, TI rev. 2023) supersedes archived version (SRC-C, undated). 6mV is the current spec for the commercial temperature range part.',
     confidence: 0.92,
   },
 ]
+
+function PriorityLadder({ sources }) {
+  const winnerPriority = sources.find(s => s.winner)?.priority
+  return (
+    <div className="adj-priority-ladder">
+      <div className="text-label" style={{ marginBottom: 10 }}>// Source Priority Ranking</div>
+      {PRIORITY_LADDER.map(p => {
+        const isApplied = p.rank === winnerPriority
+        const usedBySource = sources.find(s => s.type === p.label)
+        return (
+          <div key={p.rank} className={`adj-priority-row${isApplied ? ' applied' : ''}${usedBySource ? ' has-source' : ''}`}>
+            <span className="adj-priority-rank">[ P{p.rank} ]</span>
+            <span className="adj-priority-label">{p.label}</span>
+            {isApplied && <span className="adj-priority-applied">← winning tier</span>}
+          </div>
+        )
+      })}
+      <div className="adj-priority-note">
+        Priority applied top-down. First available tier with valid data wins.
+      </div>
+    </div>
+  )
+}
 
 export default function Adjudication() {
   const { id } = useParams()
@@ -85,7 +115,6 @@ export default function Adjudication() {
             </div>
           ))}
 
-          {/* Empty state when no conflicts */}
           {CONFLICTS.length === 0 && (
             <div className="empty-state">
               <div className="empty-state-art">{'[ ✓ ]'}</div>
@@ -108,19 +137,28 @@ export default function Adjudication() {
                 )}
               </div>
               <div className="adj-detail-body">
+
+                {/* Priority ladder */}
+                <PriorityLadder sources={conflict.sources} />
+
                 {/* Source comparison */}
                 <div>
                   <div className="text-label" style={{ marginBottom: 12 }}>// Source Values</div>
                   <div className="adj-sources-grid">
                     {conflict.sources.map((s, i) => (
                       <div key={i} className={`adj-source-col${s.winner ? ' winner' : ' loser'}`}>
-                        <div className="adj-src-id">[{s.id}]</div>
+                        <div className="adj-src-id">
+                          [{s.id}] <span className="adj-src-priority">P{s.priority}</span>
+                        </div>
                         <div className="adj-src-value">{s.value}</div>
-                        <div className="adj-src-url">{s.type}</div>
+                        <div className="adj-src-type">{s.type}</div>
                         <div className="adj-src-url">{s.url}</div>
                         <div className={`adj-src-verdict${s.winner ? ' win' : ' lose'}`}>
                           {s.winner ? '✓ Selected' : '✗ Rejected'}
                         </div>
+                        {!s.winner && s.rejectionReason && (
+                          <div className="adj-src-rejection">{s.rejectionReason}</div>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -21,6 +21,7 @@ const NAV_ITEMS = [
     section: 'Data',
     items: [
       { path: '/history', label: '// Library',      icon: <IconLib /> },
+      { path: '/audit',   label: '// Evaluation',   icon: <IconAudit /> },
     ]
   },
   {
@@ -128,6 +129,14 @@ function IconLib() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M2 2.5H5.5V12H2V2.5Z"/><path d="M5.5 2.5H9V12H5.5V2.5Z"/><path d="M9 2.5H12V12H9V2.5Z"/>
+    </svg>
+  )
+}
+function IconAudit() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="2" y="2" width="10" height="10" rx="0"/>
+      <polyline points="4.5,7 6.5,9 9.5,5"/>
     </svg>
   )
 }

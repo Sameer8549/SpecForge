@@ -2,6 +2,34 @@
    STATES — Global empty, loading, error, and skeleton components
    ============================================================ */
 
+/* ── ENTAILMENT LABELS ───────────────────────────────────── */
+.entailment-label {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  padding: 1px 0;
+  display: inline-block;
+}
+/* Large variant — used in detail panels */
+.entailment-label.ent-lg {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 4px 0;
+}
+.ent-supported     { color: var(--green); }
+.ent-partial       { color: var(--amber); }
+.ent-not-supported {
+  color: var(--red);
+  background: rgba(230, 25, 25, 0.07);
+  padding: 1px 4px;
+}
+.ent-ambiguous     { color: var(--text-dim); font-style: italic; }
+
+/* Large variants maintain tint */
+.ent-lg.ent-not-supported { padding: 4px 8px; }
+
 /* ── SKELETON BLOCKS (field-level) ──────────────────────── */
 .skel-line {
   height: 12px;

@@ -1,12 +1,45 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './ReviewQueue.css'
+import { EntailmentLabel } from '../components/States'
 
 const QUEUE_ITEMS = [
-  { id: 1, mpn: 'LM741CN',  brand: 'Texas Instruments', field: 'Input Bias Current', value: '80nA',    conf: 0.72, reason: 'Confidence below threshold (0.80). Only 2 of 4 sources provided this field.', wo: 'WO-20240811-001', status: 'pending' },
-  { id: 2, mpn: 'LM741CN',  brand: 'Texas Instruments', field: 'Slew Rate',           value: '0.5V/μs', conf: 0.68, reason: 'Confidence below threshold. Single-source extraction — no cross-reference available.', wo: 'WO-20240811-001', status: 'pending' },
-  { id: 3, mpn: 'BC547B',   brand: 'Fairchild',         field: 'hFE Gain',            value: '220',      conf: 0.61, reason: 'Sources disagree. Majority value selected but minority is within spec range.', wo: 'WO-20240810-042', status: 'pending' },
-  { id: 4, mpn: '1N4007',   brand: 'ON Semiconductor',  field: 'Forward Voltage',     value: '1.1V',    conf: 0.55, reason: 'Multiple conflicting values from distributor sources. Manufacturer page unavailable.', wo: 'WO-20240810-039', status: 'pending' },
+  {
+    id: 1, mpn: 'LM741CN', brand: 'Texas Instruments', field: 'Input Bias Current',
+    value: '80nA', conf: 0.72,
+    entailment: 'partial',
+    entailmentReason: 'Only 2 of 4 sources provided this field; value agrees across available sources but cross-reference coverage is insufficient for full support.',
+    sourceType: 'Manufacturer Datasheet',
+    reason: 'Confidence below threshold (0.80). Only 2 of 4 sources provided this field.',
+    wo: 'WO-20240811-001', status: 'pending',
+  },
+  {
+    id: 2, mpn: 'LM741CN', brand: 'Texas Instruments', field: 'Slew Rate',
+    value: '0.5V/μs', conf: 0.68,
+    entailment: 'partial',
+    entailmentReason: 'Single-source extraction with no cross-reference available; value is plausible from the manufacturer datasheet but cannot be fully corroborated.',
+    sourceType: 'Manufacturer Datasheet',
+    reason: 'Confidence below threshold. Single-source extraction — no cross-reference available.',
+    wo: 'WO-20240811-001', status: 'pending',
+  },
+  {
+    id: 3, mpn: 'BC547B', brand: 'Fairchild', field: 'hFE Gain',
+    value: '220', conf: 0.61,
+    entailment: 'ambiguous',
+    entailmentReason: 'Sources report values of 200, 220, and 290; majority value selected but all minority values fall within the published spec range, making the extraction ambiguous rather than clearly supported.',
+    sourceType: 'Authorized Distributor',
+    reason: 'Sources disagree. Majority value selected but minority is within spec range.',
+    wo: 'WO-20240810-042', status: 'pending',
+  },
+  {
+    id: 4, mpn: '1N4007', brand: 'ON Semiconductor', field: 'Forward Voltage',
+    value: '1.1V', conf: 0.55,
+    entailment: 'not_supported',
+    entailmentReason: 'Multiple distributor sources report conflicting values (1.0V, 1.1V, 1.2V) and manufacturer page was unavailable; no authoritative source supports any single value with confidence.',
+    sourceType: 'Authorized Distributor',
+    reason: 'Multiple conflicting values from distributor sources. Manufacturer page unavailable.',
+    wo: 'WO-20240810-039', status: 'pending',
+  },
 ]
 
 const FILTERS = ['All', 'Pending', 'Approved', 'Rejected']
@@ -91,6 +124,7 @@ export default function ReviewQueue() {
                   <span className={`badge${st === 'approved' ? ' badge-verified' : st === 'rejected' ? ' badge-error' : ' badge-warning'}`}>
                     {st}
                   </span>
+                  <EntailmentLabel entailment={q.entailment} />
                   <span className="text-label">{Math.round(q.conf * 100)}%</span>
                 </div>
               </div>
@@ -121,10 +155,18 @@ export default function ReviewQueue() {
                   </div>
                 </div>
 
-                {/* Flag reason */}
-                <div className="queue-flag-reason">
-                  <div className="queue-flag-label">// Why Flagged</div>
-                  {item.reason}
+                {/* Entailment + flag reason */}
+                <div className="queue-flag-block">
+                  <div className="queue-flag-entailment">
+                    <div className="queue-flag-label">// Entailment</div>
+                    <EntailmentLabel entailment={item.entailment} size="lg" />
+                    <div className="queue-entailment-reason">{item.entailmentReason}</div>
+                  </div>
+                  <div className="queue-flag-reason">
+                    <div className="queue-flag-label">// Flag Reason</div>
+                    <div className="queue-flag-source-type">{item.sourceType}</div>
+                    {item.reason}
+                  </div>
                 </div>
 
                 {/* Edit field */}
@@ -143,7 +185,7 @@ export default function ReviewQueue() {
                   </div>
                 )}
 
-                {/* Source quick-view */}
+                {/* Work order */}
                 <div>
                   <div className="text-label" style={{ marginBottom: 8 }}>// Work Order</div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>

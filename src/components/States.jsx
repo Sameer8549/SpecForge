@@ -1,5 +1,29 @@
 import './States.css'
 
+/* ── ENTAILMENT LABEL ─────────────────────────────────────── */
+
+const ENTAILMENT_META = {
+  supported:     { text: '[ ✓ SUPPORTED ]',         cls: 'ent-supported' },
+  partial:       { text: '[ ~ PARTIAL ]',            cls: 'ent-partial' },
+  not_supported: { text: '[ ✗ NOT SUPPORTED ]',      cls: 'ent-not-supported' },
+  ambiguous:     { text: '[ ? AMBIGUOUS ]',           cls: 'ent-ambiguous' },
+}
+
+/**
+ * Entailment label — terminal bracket style, consistent with stage/status chips.
+ * Four states: supported / partial / not_supported / ambiguous
+ */
+export function EntailmentLabel({ entailment, size = 'sm' }) {
+  if (!entailment) return null
+  const meta = ENTAILMENT_META[entailment]
+  if (!meta) return null
+  return (
+    <span className={`entailment-label ${meta.cls}${size === 'lg' ? ' ent-lg' : ''}`}>
+      {meta.text}
+    </span>
+  )
+}
+
 /* ── SKELETON COMPONENTS ─────────────────────────────────── */
 
 /** Generic skeleton line */
